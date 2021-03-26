@@ -1,0 +1,55 @@
+import itertools as it
+kombinacje = []
+t=[2,3,4,5,6,7,8,9,10]
+for i in range(7):
+    if i not in [0,1]:
+        c = list(it.combinations(t, i))
+        kombinacje+=c
+        
+kombinacje.reverse()
+# print(kombinacje)
+
+def lagrange_interpolation(x, y, u):
+    r = range(len(y))
+    a =       [y[i]/product( x[i]-x[j] for j in r if j != i ) for i in r]
+    return sum(a[i]*product([u   -x[j] for j in r if j != i]) for i in r)
+
+def product(a): 
+    p = 1
+    for i in a: 
+        p *= i
+    return p
+  
+
+def fun(x1):
+    y1=[]
+    for i in range(len(x1)):
+        y1.append(x1[i]/(1-x1[i]))
+    return y1
+
+
+lista_max=[]
+tuple_max=()
+i_max=0
+max123=lagrange_interpolation(kombinacje[i], fun(kombinacje[i]), o)
+for i in range(len(kombinacje)):
+    o=2
+    o+=0.01
+    while o <= 10:
+        estim = lagrange_interpolation(kombinacje[i], fun(kombinacje[i]), o)-(o/(1-o))
+        if abs(estim) > max123:
+            max123=abs(estim)
+            i_max=i
+        o+=0.01
+    lista_max.append(max123)
+    tuple_max+=(i,max123)
+#     print(max)
+
+        
+print(i_max)
+print(min(lista_max))
+
+x = [2,3]
+print(fun(x))
+k1=lagrange_interpolation(x,fun(x),2)
+k2=(2/(1-2))
