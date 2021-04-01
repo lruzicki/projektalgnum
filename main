@@ -1,4 +1,6 @@
 import itertools as it
+from sympy import symbols
+
 kombinacje = []
 t=[2,3,4,5,6,7,8,9,10]
 for i in range(7):
@@ -34,22 +36,30 @@ i_max=0
 max123=lagrange_interpolation(kombinacje[i], fun(kombinacje[i]), o)
 for i in range(len(kombinacje)):
     o=2
+    maxlokalne= lagrange_interpolation(kombinacje[i], fun(kombinacje[i]), o)-(o/(1-o))
     o+=0.01
     while o <= 10:
         estim = lagrange_interpolation(kombinacje[i], fun(kombinacje[i]), o)-(o/(1-o))
         if abs(estim) > max123:
             max123=abs(estim)
             i_max=i
+        if abs(estim) > maxlokalne:
+            maxlokalne = abs(estim)
         o+=0.01
-    lista_max.append(max123)
-    tuple_max+=(i,max123)
+    lista_max.append(maxlokalne)
+    tuple_max+=(i,maxlokalne)
 #     print(max)
 
         
 print(i_max)
 print(min(lista_max))
+print(tuple_max)
 
-x = [2,3]
-print(fun(x))
-k1=lagrange_interpolation(x,fun(x),2)
-k2=(2/(1-2))
+print(kombinacje[i_max])
+xx = kombinacje[i_max]
+x = symbols('x')
+y = fun(xx)
+l0 = ((x - xx[1])/(xx[0] - xx[1]))
+l1 = (x - xx[0])/(xx[1] - xx[0])
+p = l0*y[0] + l1*y[1]
+print(p)
