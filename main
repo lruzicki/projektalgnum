@@ -8,7 +8,7 @@ for i in range(7):
         c = list(it.combinations(t, i))
         kombinacje+=c
         
-kombinacje.reverse()
+# kombinacje.reverse()
 # print(kombinacje)
 
 def lagrange_interpolation(x, y, u):
@@ -33,27 +33,29 @@ def fun(x1):
 lista_max=[]
 tuple_max=()
 i_max=0
-max123=lagrange_interpolation(kombinacje[i], fun(kombinacje[i]), o)
+o=2.0
+#max123=lagrange_interpolation(kombinacje[i], fun(kombinacje[i]), o)
+max123=100.0
 for i in range(len(kombinacje)):
-    o=2
+    o=2.0
     maxlokalne= lagrange_interpolation(kombinacje[i], fun(kombinacje[i]), o)-(o/(1-o))
     o+=0.01
-    while o <= 10:
+    while o <= 10.0:
         estim = lagrange_interpolation(kombinacje[i], fun(kombinacje[i]), o)-(o/(1-o))
-        if abs(estim) > max123:
-            max123=abs(estim)
-            i_max=i
         if abs(estim) > maxlokalne:
             maxlokalne = abs(estim)
         o+=0.01
+    if abs(maxlokalne) < max123:
+            max123=abs(maxlokalne)
+            i_max=i
     lista_max.append(maxlokalne)
     tuple_max+=(i,maxlokalne)
 #     print(max)
 
         
-print(i_max)
+print(max123)
 print(min(lista_max))
-print(tuple_max)
+# print(tuple_max)
 
 print(kombinacje[i_max])
 xx = kombinacje[i_max]
@@ -61,5 +63,45 @@ x = symbols('x')
 y = fun(xx)
 l0 = ((x - xx[1])/(xx[0] - xx[1]))
 l1 = (x - xx[0])/(xx[1] - xx[0])
+
 p = l0*y[0] + l1*y[1]
 print(p)
+
+from sympy import * #Symbol, simplify, lambdify
+import numpy as np
+import matplotlib.pyplot as plt
+from functools import reduce
+import operator
+
+def fun(x1):
+    y1=[]
+    for i in range(len(x1)):
+        y1.append(x1[i]/(1-x1[i]))
+    return y1
+
+def lagrange_interpolation(u, x, y):
+    r = range(len(y))
+    a =       [y[i]/product( x[i]-x[j] for j in r if j != i ) for i in r]
+    return sum(a[i]*product([u   -x[j] for j in r if j != i]) for i in r)
+
+def product(a): 
+    p = 1
+    for i in a: 
+        p *= i
+    return p
+
+x = Symbol('x')
+k = [2, 3, 4, 7, 9, 10]
+w1=fun(k)
+poly = simplify(lagrange_interpolation(x,k,w1))
+
+x1 = np.linspace(2, 10, 1000)
+y1 = lambdify(x, poly)(x1)
+
+fig, ax = plt.subplots()
+ax.plot(x1, y1)
+ax.scatter(k,w1, c = 'r')
+
+plt.show()
+
+print(latex(poly))
